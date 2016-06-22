@@ -30,6 +30,8 @@
     "got": "^6.3.0",
     "lodash": "^4.13.1",
     "pcm-silence": "^1.1.0",
+    "pify": "^2.3.0",
+    "playmusic": "github:rahatarmanahmed/playmusic#aec7089fbf62725230538264e618025c1fcd2ae8",
     "squelch-client": "^0.18.0",
     "throttle": "^1.0.3",
     "ytdl-core": "^0.7.16"
