@@ -1,0 +1,28 @@
+{
+  "name": "irc-radio",
+  "description": "IRC-controlled internet radio",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "author": "Raymond Hammarling",
+  "scripts": {
+    "lint": "eslint lib/ test/",
+    "test": "ava test/",
+    "build": "echo nop",
+    "pretest": "npm run lint",
+    "watch": "onchange src/ -- npm run build && echo Done",
+    "dev": "npm run watch",
+    "prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "ava": "^0.15.2",
+    "babel-cli": "^6.10.1",
+    "babel-eslint": "^6.0.5",
+    "babel-preset-es2015-node4": "^2.1.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.9.0",
+    "eslint": "^2.13.1",
+    "eslint-config-kellyirc": "^3.1.0",
+    "onchange": "^2.5.0"
+  }
+}
