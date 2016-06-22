@@ -1,8 +1,9 @@
+import _ from 'lodash';
 import Throttle from 'throttle';
 import { Readable as PcmSilenceReadable } from 'pcm-silence';
 
-import got from 'got';
-import ffmpeg from 'fluent-ffmpeg';
+import httpSource from './sources/http';
+import ffmpegFormat from './formats/ffmpeg';
 
 import { Readable as MixingReadable } from './live-mixing';
 
@@ -18,13 +19,23 @@ export default class Radio {
             byteOrder: 'LE'
         }))
         .pipe(this.mr.createInputStream());
+
+        this.sources = [
+            httpSource
+        ];
+
+        this.formats = [
+            ffmpegFormat
+        ];
     }
 
     play(url) {
-        ffmpeg(got.stream(url))
-            .audioChannels(2)
-            .audioFrequency(44100)
-            .format('s16le')
-            .pipe(this.mr.createInputStream());
+        const source = _.find(this.sources, source => source.handles(url));
+
+        const input = source.getStream(url);
+
+        const format = _.find(this.formats, format => format.handles(input));
+
+        format.transformFormat(input, this.mr.createInputStream());
     }
 }
