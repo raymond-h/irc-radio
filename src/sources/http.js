@@ -1,6 +1,8 @@
 import got from 'got';
 
 export default {
+    name: 'plain http',
+
     handles() {
         return true;
     },

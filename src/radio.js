@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Throttle from 'throttle';
 import { Readable as PcmSilenceReadable } from 'pcm-silence';
 
+import youtubeSource from './sources/youtube';
 import httpSource from './sources/http';
 import ffmpegFormat from './formats/ffmpeg';
 
@@ -21,6 +22,7 @@ export default class Radio {
         .pipe(this.mr.createInputStream());
 
         this.sources = [
+            youtubeSource,
             httpSource
         ];
 
@@ -31,10 +33,12 @@ export default class Radio {
 
     play(url) {
         const source = _.find(this.sources, source => source.handles(url));
+        console.error('USING SOURCE TYPE:', source.name);
 
         const input = source.getStream(url);
 
         const format = _.find(this.formats, format => format.handles(input));
+        console.error('USING FORMAT TYPE:', format.name);
 
         format.transformFormat(input, this.mr.createInputStream());
     }

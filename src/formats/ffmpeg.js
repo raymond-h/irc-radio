@@ -1,6 +1,8 @@
 import ffmpeg from 'fluent-ffmpeg';
 
 export default {
+    name: 'ffmpeg',
+
     handles() {
         return true;
     },
