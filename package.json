@@ -8,9 +8,9 @@
   "scripts": {
     "lint": "eslint lib/ test/",
     "test": "ava test/",
-    "build": "echo nop",
+    "build": "babel -d lib/ src/",
     "pretest": "npm run lint",
-    "watch": "onchange src/ -- npm run build && echo Done",
+    "watch": "npm run build -- -w",
     "dev": "npm run watch",
     "prepublish": "npm run build"
   },
@@ -24,5 +24,10 @@
     "eslint": "^2.13.1",
     "eslint-config-kellyirc": "^3.1.0",
     "onchange": "^2.5.0"
+  },
+  "dependencies": {
+    "lodash": "^4.13.1",
+    "pcm-silence": "^1.1.0",
+    "throttle": "^1.0.3"
   }
 }
