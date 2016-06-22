@@ -3,7 +3,9 @@ import { Readable as PcmSilenceReadable } from 'pcm-silence';
 
 import youtubeSource from './sources/youtube';
 import httpSource from './sources/http';
+import pmSource from './sources/playmusic';
 import ffmpegFormat from './formats/ffmpeg';
+import s16leFormat from './formats/s16le';
 
 import { Readable as MixingReadable } from './live-mixing';
 
@@ -30,10 +32,12 @@ export default class Radio {
 
         this.sources = [
             youtubeSource,
+            pmSource,
             httpSource
         ];
 
         this.formats = [
+            s16leFormat,
             ffmpegFormat
         ];
     }
