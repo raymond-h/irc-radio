@@ -33,5 +33,9 @@
     "squelch-client": "^0.18.0",
     "throttle": "^1.0.3",
     "ytdl-core": "^0.7.16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raymond-h/irc-radio"
   }
 }
