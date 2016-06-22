@@ -26,8 +26,11 @@
     "onchange": "^2.5.0"
   },
   "dependencies": {
+    "fluent-ffmpeg": "^2.1.0",
+    "got": "^6.3.0",
     "lodash": "^4.13.1",
     "pcm-silence": "^1.1.0",
+    "squelch-client": "^0.18.0",
     "throttle": "^1.0.3"
   }
 }
