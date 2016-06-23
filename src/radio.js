@@ -3,7 +3,8 @@ import eos from 'end-of-stream';
 import { Readable as PcmSilenceReadable } from 'pcm-silence';
 import pify from 'pify';
 
-import youtubeSource from './sources/youtube';
+// import youtubeSource from './sources/youtube';
+import youtubeDlSource from './sources/youtube-dl';
 import httpSource from './sources/http';
 import pmSource from './sources/playmusic';
 import ffmpegFormat from './formats/ffmpeg';
@@ -38,7 +39,8 @@ export default class Radio {
         .pipe(this.mr.createInputStream());
 
         this.sources = [
-            youtubeSource,
+            // youtubeSource,
+            youtubeDlSource,
             pmSource,
             httpSource
         ];
