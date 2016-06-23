@@ -29,6 +29,40 @@ function mixSamples(chunks) {
     return out;
 }
 
+function streamBuffer(stream, maxBufferSize = 16384) {
+    let isDone = false;
+    let buffer = new Buffer(0);
+
+    stream
+    .on('data', data => {
+        buffer = Buffer.concat([buffer, data]);
+
+        if(buffer.length >= maxBufferSize) {
+            stream.pause();
+        }
+    })
+    .on('end', () => {
+        isDone = true;
+    });
+
+    return {
+        read(size) {
+            const data = buffer.slice(0, size);
+            buffer = buffer.slice(size);
+
+            if(buffer.length < maxBufferSize) {
+                stream.resume();
+            }
+
+            return data;
+        },
+
+        get isDone() {
+            return isDone && buffer.length == 0;
+        }
+    };
+}
+
 export class Readable extends stream.Readable {
     constructor(opts) {
         super(opts);
@@ -38,21 +72,19 @@ export class Readable extends stream.Readable {
 
     createInputStream() {
         const s = new stream.PassThrough();
-        this.inStreams.push(s);
+        const sb = streamBuffer(s);
+        this.inStreams.push(sb);
         return s;
     }
 
     _read(size) { this._tryRead(size); }
 
     _tryRead(size) {
-        this.inStreams = this.inStreams.filter((s) => !s._readableState.endEmitted);
+        this.inStreams = this.inStreams.filter(sb => !sb.isDone);
 
         if(this.inStreams.length === 0) return this.push(null);
 
-        const chunks = this.inStreams
-            .map((s) => s.read(size))
-            .filter((c) => c != null)
-        ;
+        const chunks = this.inStreams.map(sb => sb.read(size));
 
         if(this.push(mixSamples(chunks))) {
             setImmediate(() => this._tryRead(size));
