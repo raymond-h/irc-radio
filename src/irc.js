@@ -23,7 +23,7 @@ async function main() {
         client.msg(to, "OK, I'll sing it!");
 
         const url = match[1];
-        radio.play(url);
+        radio.queue(url);
     });
 }
 
