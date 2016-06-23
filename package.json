@@ -26,6 +26,7 @@
     "onchange": "^2.5.0"
   },
   "dependencies": {
+    "concat-stream": "^1.5.1",
     "end-of-stream": "^1.1.0",
     "fluent-ffmpeg": "^2.1.0",
     "got": "^6.3.0",

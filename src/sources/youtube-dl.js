@@ -1,15 +1,31 @@
-import url from 'url';
 import { spawn } from 'child_process';
+import concat from 'concat-stream';
 
 export default {
     name: 'youtube-dl',
 
     async handles(inputUrl) {
-        const urlParts = url.parse(inputUrl);
+        const ytdl = spawn('youtube-dl', [inputUrl, '-j']);
 
-        return /http/.test(urlParts.protocol) &&
-            /youtube\.[a-z]+/i.test(urlParts.host) &&
-            /watch/.test(urlParts.pathname);
+        const [stdout, success] = await Promise.all([
+            new Promise((resolve, reject) => {
+                ytdl.on('error', reject);
+                ytdl.stdout.pipe(concat(resolve));
+            }),
+            new Promise((resolve, reject) => {
+                ytdl
+                .on('exit', code => {
+                    resolve(code === 0);
+                })
+                .on('error', reject);
+            })
+        ]);
+
+        if(!success) return false;
+
+        const obj = JSON.parse(stdout);
+
+        return obj.extractor !== 'generic';
     },
 
     getStream(inputUrl) {
