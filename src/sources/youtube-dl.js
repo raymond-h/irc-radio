@@ -7,9 +7,18 @@ export default {
     async handles(inputUrl) {
         const urlParts = url.parse(inputUrl);
 
-        return /http/.test(urlParts.protocol) &&
-            /youtube\.[a-z]+/i.test(urlParts.host) &&
-            /watch/.test(urlParts.pathname);
+        return (
+                /http/.test(urlParts.protocol) &&
+                /youtube\.[a-z]+/i.test(urlParts.host) &&
+                /watch/.test(urlParts.pathname)
+            ) || (
+                /http/.test(urlParts.protocol) &&
+                /bandcamp\.com/i.test(urlParts.host)
+            ) || (
+                /http/.test(urlParts.protocol) &&
+                /soundcloud\.com/i.test(urlParts.host)
+            )
+        ;
     },
 
     getStream(inputUrl) {
