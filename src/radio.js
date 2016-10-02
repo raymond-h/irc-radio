@@ -28,9 +28,6 @@ export default class Radio extends EventEmitter {
 
         this.out = this.mr.pipe(new Throttle(44100 * 2 * 2));
 
-        this.playing = false;
-        this.urlQueue = [];
-
         (new PcmSilenceReadable({
             signed: true,
             bitDepth: 16,

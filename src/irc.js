@@ -1,21 +1,22 @@
 import Client from 'squelch-client';
-import Radio from './radio';
-import Queue from './queue';
+import deepstream from 'deepstream.io-client-js';
 
 async function main() {
+    const dsClient = deepstream(process.env.DEEPSTREAM_HOST_PORT).login({
+        username: process.env.DEEPSTREAM_USERNAME,
+        password: process.env.DEEPSTREAM_PASSWORD
+    });
+
     const client = new Client({
         server: 'irc.esper.net',
         nick: 'Otsu-chan',
         autoConnect: false,
-        channels: ['#kellyirc']
+        channels: [process.argv[2]]
     });
 
     await client.connect();
 
-    const radio = new Radio();
-    radio.out.pipe(process.stdout);
-
-    const queue = new Queue(radio);
+    const songStateRecord = dsClient.record.getRecord('song-state');
 
     const playRegex = /^#play\s+(.+)$/;
     client.on('msg', ({ to, msg }) => {
@@ -24,7 +25,7 @@ async function main() {
 
         client.msg(to, "OK, I'll sing it!");
 
-        queue.queueUrl(match[1]);
+        dsClient.event.emit('queue', { action: 'add', url: match[1] });
     });
 
     const nextRegex = /^#next$/;
@@ -34,11 +35,38 @@ async function main() {
 
         client.msg(to, 'OK, skipping to next song!');
 
-        queue.next();
+        dsClient.event.emit('queue', { action: 'next' });
     });
 
-    radio.on('song-end', (url, stream, manual) => console.error('SONG ENDED:', url, 'MANUALLY?', manual));
-    radio.on('song-start', (url) => console.error('NOW PLAYING:', url));
+    const currentRegex = /^#current$/;
+    client.on('msg', ({ to, msg }) => {
+        const match = currentRegex.exec(msg);
+        if(match == null) return;
+
+        if(songStateRecord.get('currentSong') != null) {
+            client.msg(to, `The current song is: ${ songStateRecord.get('currentSong') }`);
+        }
+        else {
+            client.msg(to, 'Not singing at all right now!');
+        }
+    });
+
+    const queueRegex = /^#queue$/;
+    client.on('msg', ({ to, msg }) => {
+        const match = queueRegex.exec(msg);
+        if(match == null) return;
+
+        const queue = songStateRecord.get('queue');
+        if(queue.length === 0) {
+            client.msg(to, 'No songs coming up!');
+            return;
+        }
+
+        client.msg(to, 'Coooooming up!');
+        for(const song of queue) {
+            client.msg(to, `> ${song}`);
+        }
+    });
 }
 
 main()
