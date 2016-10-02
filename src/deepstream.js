@@ -1,16 +1,25 @@
+import cp from 'child_process';
 import deepstream from 'deepstream.io-client-js';
+import minimist from 'minimist';
 import R from 'ramda';
 import Radio from './radio';
 import Queue from './queue';
 
-async function main() {
+async function main(argv) {
     const dsClient = deepstream(process.env.DEEPSTREAM_HOST_PORT).login({
         username: process.env.DEEPSTREAM_USERNAME,
         password: process.env.DEEPSTREAM_PASSWORD
     });
 
     const radio = new Radio();
-    radio.out.pipe(process.stdout);
+
+    if(argv.c === '-') {
+        radio.out.pipe(process.stdout);
+    }
+    else {
+        const outCmd = cp.exec(argv.c);
+        radio.out.pipe(outCmd.stdin);
+    }
 
     const queue = new Queue(radio);
 
@@ -34,5 +43,9 @@ async function main() {
     radio.on('song-start', (url) => console.error('NOW PLAYING:', url));
 }
 
-main()
+main(
+    minimist(process.argv.slice(2), {
+        default: { 'c': '-' }
+    })
+)
 .catch((err) => console.error(err.stack));

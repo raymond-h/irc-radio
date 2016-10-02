@@ -31,6 +31,7 @@
     "fluent-ffmpeg": "^2.1.0",
     "got": "^6.3.0",
     "lodash": "^4.13.1",
+    "minimist": "^1.2.0",
     "pcm-silence": "^1.1.0",
     "pify": "^2.3.0",
     "playmusic": "github:rahatarmanahmed/playmusic#aec7089fbf62725230538264e618025c1fcd2ae8",
