@@ -28,7 +28,6 @@
   "dependencies": {
     "deepstream.io-client-js": "^1.1.1",
     "end-of-stream": "^1.1.0",
-    "fluent-ffmpeg": "^2.1.0",
     "got": "^6.3.0",
     "lodash": "^4.13.1",
     "pcm-silence": "^1.1.0",
