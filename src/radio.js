@@ -62,6 +62,7 @@ export default class Radio extends EventEmitter {
         ];
 
         this.manuallyStopped = false;
+        this.willPlaySong = false;
 
         this
         .on('song-start', (url, stream) => {
@@ -69,14 +70,17 @@ export default class Radio extends EventEmitter {
         })
         .on('song-end', () => {
             this.currentlyPlayingStream = null;
+            this.willPlaySong = false;
         });
     }
 
     get isPlaying() {
-        return this.currentlyPlayingStream != null;
+        return this.willPlaySong || this.currentlyPlayingStream != null;
     }
 
     async play(url) {
+        this.willPlaySong = true;
+
         const source = await findAsync(this.sources, source => source.handles(url));
         console.error('USING SOURCE TYPE:', source.name);
 
