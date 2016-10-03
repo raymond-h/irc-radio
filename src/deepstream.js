@@ -36,7 +36,7 @@ async function main(argv) {
         }
 
         if(_.isArray(data.queue)) {
-            data.currentSong.forEach(::queue.queueUrl);
+            data.queue.forEach(::queue.queueUrl);
         }
 
         setSongStatePath({ currentSong: null, queue: queue.queue, ...data });
