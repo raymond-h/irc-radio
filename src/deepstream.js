@@ -31,9 +31,9 @@ async function main(argv) {
     songStateRecord.whenReady(() => {
         const data = songStateRecord.get();
 
-        if(data.currentSong != null) {
-            queue.queueUrl(data.currentSong);
-        }
+        // if(data.currentSong != null) {
+        //     queue.queueUrl(data.currentSong);
+        // }
 
         if(_.isArray(data.queue)) {
             data.queue.forEach(::queue.queueUrl);
