@@ -1,15 +1,18 @@
+import minimist from 'minimist';
 import deepstream from 'deepstream.io-client-js';
 import R from 'ramda';
 import Radio from './radio';
 import Queue from './queue';
 
-async function main() {
+async function main(argv) {
     const dsClient = deepstream(process.env.DEEPSTREAM_HOST_PORT).login({
         username: process.env.DEEPSTREAM_USERNAME,
         password: process.env.DEEPSTREAM_PASSWORD
     });
 
-    const radio = new Radio();
+    const radio = new Radio({
+        useAWGN: argv.useAwgn
+    });
     radio.out.pipe(process.stdout);
 
     const queue = new Queue(radio);
@@ -34,5 +37,12 @@ async function main() {
     radio.on('song-start', (url) => console.error('NOW PLAYING:', url));
 }
 
-main()
+main(
+    minimist(process.argv.slice(2), {
+        boolean: ['useAwgn'],
+        alias: {
+            useAwgn: 'w'
+        }
+    })
+)
 .catch((err) => console.error(err.stack));

@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import Throttle from 'throttle';
 import eos from 'end-of-stream';
-// import { Readable as PcmSilenceReadable } from 'pcm-silence';
+import { Readable as PcmSilenceReadable } from 'pcm-silence';
 import baudio from 'baudio';
 import Chance from 'chance';
 
@@ -23,24 +23,31 @@ async function findAsync(array, fn) {
 }
 
 export default class Radio extends EventEmitter {
-    constructor() {
+    constructor(opts = {}) {
         super();
 
         this.mr = new MixingReadable({ highWaterMark: 1024 });
 
         this.out = this.mr.pipe(new Throttle(44100 * 2 * 2));
 
-        // (new PcmSilenceReadable({
-        //     signed: true,
-        //     bitDepth: 16,
-        //     byteOrder: 'LE'
-        // }))
-
-        const chance = new Chance();
-        baudio({ rate: 44100 },
-            () => chance.normal({ mean: 0, dev: 0.0000316227766 })
-        )
-        .pipe(this.mr.createInputStream());
+        const useAWGN = opts.useAWGN != null ? opts.useAWGN : false;
+        if(useAWGN) {
+            // additive white Gaussian noise, at -90 dBFS
+            const chance = new Chance();
+            baudio({ rate: 44100 },
+                () => chance.normal({ mean: 0, dev: 0.0000316227766 })
+            )
+            .pipe(this.mr.createInputStream());
+        }
+        else {
+            // pure silence
+            (new PcmSilenceReadable({
+                signed: true,
+                bitDepth: 16,
+                byteOrder: 'LE'
+            }))
+            .pipe(this.mr.createInputStream());
+        }
 
         this.sources = [
             // youtubeSource,
