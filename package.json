@@ -26,6 +26,8 @@
     "onchange": "^2.5.0"
   },
   "dependencies": {
+    "baudio": "^2.1.2",
+    "chance": "^1.0.4",
     "deepstream.io-client-js": "^1.1.1",
     "end-of-stream": "^1.1.0",
     "fluent-ffmpeg": "^2.1.0",

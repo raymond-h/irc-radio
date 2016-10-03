@@ -1,7 +1,9 @@
 import { EventEmitter } from 'events';
 import Throttle from 'throttle';
 import eos from 'end-of-stream';
-import { Readable as PcmSilenceReadable } from 'pcm-silence';
+// import { Readable as PcmSilenceReadable } from 'pcm-silence';
+import baudio from 'baudio';
+import Chance from 'chance';
 
 // import youtubeSource from './sources/youtube';
 import youtubeDlSource from './sources/youtube-dl';
@@ -28,11 +30,16 @@ export default class Radio extends EventEmitter {
 
         this.out = this.mr.pipe(new Throttle(44100 * 2 * 2));
 
-        (new PcmSilenceReadable({
-            signed: true,
-            bitDepth: 16,
-            byteOrder: 'LE'
-        }))
+        // (new PcmSilenceReadable({
+        //     signed: true,
+        //     bitDepth: 16,
+        //     byteOrder: 'LE'
+        // }))
+
+        const chance = new Chance();
+        baudio({ rate: 44100 },
+            () => chance.normal({ mean: 0, dev: 0.0000316227766 })
+        )
         .pipe(this.mr.createInputStream());
 
         this.sources = [
