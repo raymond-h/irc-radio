@@ -22,7 +22,7 @@ export default {
     },
 
     getStream(inputUrl) {
-        const ytdl = spawn('youtube-dl', [inputUrl, '-f', 'bestaudio', '-o', '-']);
+        const ytdl = spawn('youtube-dl', [inputUrl, '-f', 'bestaudio', '--no-playlist', '-o', '-']);
 
         return {
             stream: ytdl.stdout,
