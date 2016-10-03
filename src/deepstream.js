@@ -1,6 +1,7 @@
 import minimist from 'minimist';
 import deepstream from 'deepstream.io-client-js';
 import R from 'ramda';
+import _ from 'lodash';
 import Radio from './radio';
 import Queue from './queue';
 
@@ -27,14 +28,26 @@ async function main(argv) {
     const songStateRecord = dsClient.record.getRecord('song-state');
     const setSongStatePath = R.curryN(2, ::songStateRecord.set);
 
-    songStateRecord.set({ currentSong: null, queue: queue.queue });
+    songStateRecord.whenReady(() => {
+        const data = songStateRecord.get();
 
-    queue.on('queue-changed', setSongStatePath('queue'));
-    radio.on('song-end', () => setSongStatePath('currentSong', null));
-    radio.on('song-start', setSongStatePath('currentSong'));
+        if(data.currentSong != null) {
+            queue.queueUrl(data.currentSong);
+        }
 
-    radio.on('song-end', (url, stream, manual) => console.error('SONG ENDED:', url, 'MANUALLY?', manual));
-    radio.on('song-start', (url) => console.error('NOW PLAYING:', url));
+        if(_.isArray(data.queue)) {
+            data.currentSong.forEach(::queue.queueUrl);
+        }
+
+        setSongStatePath({ currentSong: null, queue: queue.queue, ...data });
+
+        queue.on('queue-changed', setSongStatePath('queue'));
+        radio.on('song-end', () => setSongStatePath('currentSong', null));
+        radio.on('song-start', setSongStatePath('currentSong'));
+
+        radio.on('song-end', (url, stream, manual) => console.error('SONG ENDED:', url, 'MANUALLY?', manual));
+        radio.on('song-start', (url) => console.error('NOW PLAYING:', url));
+    });
 }
 
 main(
