@@ -23,7 +23,7 @@ async function main(argv) {
     let currentlyPlayingUrl = null;
 
     songStateRecord.whenReady(() => {
-        songStateRecord.set({ ...songStateRecord.get(), currentSong: null, queue: [] });
+        songStateRecord.set({ currentSong: null, queue: [], ...songStateRecord.get() });
 
         dsClient.event.subscribe('queue', data => {
             switch(data.action) {
