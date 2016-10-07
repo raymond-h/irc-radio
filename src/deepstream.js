@@ -18,6 +18,12 @@ async function main(argv) {
     });
     radio.out.pipe(process.stdout);
 
+    radio.on('error', e => {
+        console.error('*** ERROR OCCURED');
+        console.error(e.stack);
+        songStateRecord.set('currentSong', null);
+    });
+
     const songStateRecord = dsClient.record.getRecord('song-state');
 
     let currentlyPlayingUrl = null;
@@ -54,7 +60,7 @@ async function main(argv) {
             radio.stop();
 
             if(currentSong != null) {
-                radio.play(currentSong);
+                radio.play(currentSong).catch(e => radio.emit('error', e));
             }
         }, true);
 
