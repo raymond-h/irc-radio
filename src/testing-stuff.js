@@ -1,4 +1,4 @@
-import Radio from './radio';
+import Radio from './player/radio';
 
 const radio = new Radio();
 radio.out.pipe(process.stdout);
