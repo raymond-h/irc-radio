@@ -1,11 +1,7 @@
 import minimist from 'minimist';
 import deepstream from 'deepstream.io-client-js';
-import R from 'ramda';
+// import R from 'ramda';
 import Radio from './radio';
-
-function modifyRecord(record, path, fn) {
-    record.set(path, fn(record.get(path)));
-}
 
 async function main(argv) {
     const dsClient = deepstream(process.env.DEEPSTREAM_HOST_PORT).login({
@@ -29,28 +25,7 @@ async function main(argv) {
     let currentlyPlayingUrl = null;
 
     songStateRecord.whenReady(() => {
-        songStateRecord.set({ currentSong: null, queue: [], ...songStateRecord.get() });
-
-        dsClient.event.subscribe('queue', data => {
-            switch(data.action) {
-                case 'add': {
-                    modifyRecord(songStateRecord, 'queue', R.append(data.url));
-                    break;
-                }
-                case 'next': {
-                    radio.stop();
-                    break;
-                }
-            }
-        });
-
-        // Manage popping off of queue if nothing's playing ATM
-        songStateRecord.subscribe(({ currentSong, queue }) => {
-            if(currentSong == null && !R.isEmpty(queue)) {
-                songStateRecord.set('currentSong', R.head(queue));
-                songStateRecord.set('queue', R.tail(queue));
-            }
-        }, true);
+        songStateRecord.set({ currentSong: null, ...songStateRecord.get() });
 
         // Manage always playing currentSong
         songStateRecord.subscribe('currentSong', currentSong => {
