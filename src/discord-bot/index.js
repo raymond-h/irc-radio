@@ -13,7 +13,7 @@ function dsRecordObservable(record) {
 function songStateAsText(songState) {
     return `Current song: ${songState.currentSong ? `<${songState.currentSong}>` : 'nothing!'}
 
-Queue:
+Queue: ${songState.queue.length <= 0 ? 'empty right now!' : ''}
 ${songState.queue.map(song => `- <${song}>`).join('\n')}`;
 }
 
