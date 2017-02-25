@@ -8,7 +8,6 @@ import Chance from 'chance';
 // import youtubeSource from './sources/youtube';
 import youtubeDlSource from './sources/youtube-dl';
 import httpSource from './sources/http';
-import pmSource from './sources/playmusic';
 import ffmpegFormat from './formats/ffmpeg';
 import s16leFormat from './formats/s16le';
 
@@ -52,7 +51,6 @@ export default class Radio extends EventEmitter {
         this.sources = [
             // youtubeSource,
             youtubeDlSource,
-            pmSource,
             httpSource
         ];
 
