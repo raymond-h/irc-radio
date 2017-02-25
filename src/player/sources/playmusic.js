@@ -48,7 +48,7 @@ export default {
 
         return {
             stream,
-            format: 's16le'
+            format: ''
         };
     }
 };
