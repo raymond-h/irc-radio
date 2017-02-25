@@ -36,8 +36,6 @@
     "lodash": "^4.13.1",
     "minimist": "^1.2.0",
     "pcm-silence": "^1.1.0",
-    "pify": "^2.3.0",
-    "playmusic": "2.1.1",
     "ramda": "^0.22.1",
     "rxjs": "^5.2.0",
     "squelch-client": "^0.18.0",
