@@ -47,9 +47,27 @@ async function main() {
         .flatMap(msg => msg.channel.sendMessage('Hold on a second...'));
 
 
+    const lastStatusMessageCount = 3;
+
     await Promise.all([
-        Rx.Observable.combineLatest(lastStatusMsg$, songState$)
-            .flatMap(([msg, songState]) => msg.edit(songStateAsText(songState)))
+        Rx.Observable.combineLatest(
+                lastStatusMsg$
+                // like bufferCount(), but starts immediately
+                // (even with less than N elements)
+                .scan(
+                    R.flip(R.compose(
+                        R.takeLast(lastStatusMessageCount),
+                        R.append
+                    )),
+                    []
+                ),
+                songState$
+            )
+            .flatMap(([msgs, songState]) =>
+                Promise.all(msgs.map(msg =>
+                    msg.edit(songStateAsText(songState))
+                ))
+            )
             .toPromise(),
 
         songState$
